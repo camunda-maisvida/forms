@@ -1,0 +1,53 @@
+
+<div class="container" ng-app="app" ng-controller="PessoaController">
+	<form>
+		<script cam-script type="text/form-script">
+			$scope.pessoas = [];
+			$scope.pessoa = null;
+
+
+			$scope.init = function() {
+				console.log('Busca a lista de pessoas [REST]....');
+				$scope.pessoas = [
+					{id: 1, nome:'Armando'},
+					{id: 2, nome:'Bruno'},
+					{id: 3, nome:'Júlia'},
+					{id: 4, nome:'Vanessa'},
+				];
+			}
+	
+			$scope.changePessoa = function() {
+				console.log('Busca os dados de uma pessoa [REST]....');			
+			}
+
+ 			inject(['$rootScope', function($rootScope) {
+      			$scope.userName = $rootScope.authentication.name;
+				$scope.dataSolicitacao = new Date();
+    		}]);
+
+			var variableManager = camForm.variableManager;
+
+    		camForm.on('variables-fetched', function() {
+      			// access to all process variables after the form has loaded
+      			console.log('Passou aqui.......', variableManager.variables);
+    		});
+
+			$scope.init();
+
+		</script>
+
+		<div class="page-header">
+			<h3>Buscar Pessoa</h3>
+		</div>
+		<div class="row">
+			<div class="col-md-3">
+				<label>Nome do solicitante:</label> 
+				<input type="text" ng-model="userName" disabled="disabled">
+			</div>
+			<div class="col-md-3	">
+				<label>Data da solicitacao:</label> 
+				<input type="text" cam-variable-name="dataSolicitacao" cam-variable-type="string" ng-model="dataSolicitacao" disabled="disabled">
+			</div>
+		</div>
+	</form>
+</div>
