@@ -1,0 +1,42 @@
+
+<form role="form">
+
+<script cam-script type="text/form-script">
+    inject(['$rootScope', function($rootScope) {
+		//$scope.nomeSolicitante = $rootScope.authentication.name;
+		//$scope.dataSolicitacao = new Date().toLocaleDateString();
+    }]);
+</script>
+
+	<h3>Analisar Solicitação:</h3>
+	<table border="0" width="100%">
+		<tr>
+			<th>Nome do solicitante:</th>
+			<td><input type="text" cam-variable-name="nomeSolicitante" readonly"></td>
+			<th>Data da solicitação:</th>
+			<td><input type="text" cam-variable-name="dataSolicitacao" readonly></td>
+		</tr>
+	</table>
+	<hr>
+	<table border="0" width="100%">
+		<tr>
+			<th>Data de saida:</th>
+			<td><input type="date" cam-variable-name="dataSaida" readonly></td>
+			<th>Data de retorno:</th>
+			<td><input type="date" cam-variable-name="dataRetorno" readonly></td>
+		</tr>
+		<tr>
+			<th>Qtd dias: {{ qtdDias }}</th>
+			<td><input type="number" cam-variable-name="qtdDias" readonly></td>
+		</tr>
+		<tr>
+			<th>Qtd dias disponiveis:</th>
+			<td><input type="number" cam-variable-name="qtdDiasDisponivel"></td>
+		</tr>
+		<tr>
+			<th>Aprovar:</th>
+			<td><input type="text" cam-variable-name="aprovar" ></td>
+		</tr>		
+	</table>
+	
+</form>

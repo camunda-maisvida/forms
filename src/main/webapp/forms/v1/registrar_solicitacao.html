@@ -1,0 +1,41 @@
+
+<form role="form">
+
+<script cam-script type="text/form-script">
+    inject(['$rootScope', function($rootScope) {
+		$scope.nomeSolicitante = $rootScope.authentication.name;
+		$scope.dataSolicitacao = new Date().toLocaleDateString();
+    }]);
+
+	camForm.on('form-loaded', function() {
+    	// tell the form SDK to fetch the variable named 'invoiceData'
+    	camForm.variableManager.variableValue('nomeSolicitante', $scope.nomeSolicitante);
+		camForm.variableManager.variableValue('dataSolicitacao', $scope.dataSolicitacao);
+	});
+</script>
+
+	<h3>Registrar Solicitação:</h3>
+	<table border="0" width="100%">
+		<tr>
+			<th>Nome do solicitante:</th>
+			<td><input type="text" cam-variable-name="nomeSolicitante" cam-variable-type="String" readonly></td>
+		
+			<th>Data da solicitação:</th>
+			<td><input type="text" cam-variable-name="dataSolicitacao" cam-variable-type="String" readonly></td>
+		</tr>
+	</table>
+	<hr>
+	<table border="0" width="100%">
+		<tr>
+			<th>Data de saida:</th>
+			<td><input type="date" cam-variable-name="dataSaida" cam-variable-type="Date" ></td>
+			<th>Data de retorno:</th>
+			<td><input type="date" cam-variable-name="dataRetorno" cam-variable-type="Date"></td>
+		</tr>
+		<tr>
+			<th>Qtd dias:</th>
+			<td><input type="number" cam-variable-name="qtdDias" cam-variable-type="integer"></td>
+		</tr>
+	</table>
+	
+</form>
