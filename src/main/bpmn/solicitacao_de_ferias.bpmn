@@ -35,12 +35,12 @@
       <bpmn:incoming>SequenceFlow_1kgx4ua</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_IrParaAnalise</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="Task_AnalisarSolicitacao" name="Analisar Solicitação" camunda:formKey="embedded:/forms/forms/v1/analisar_solicitacao.html" camunda:candidateUsers="admin">
+    <bpmn:userTask id="Task_AnalisarSolicitacao" name="Analisar Solicitação" camunda:formKey="embedded:/forms/forms/v1/analisar_solicitacao.html" camunda:assignee="admin">
       <bpmn:incoming>SequenceFlow_IrParaAnalise</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_EnviarParaReanalise</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_Analisado</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_RealizarAjustes" name="Realizar Ajustes" camunda:formKey="embedded:/forms/forms/v1/realizar_ajustes.html" camunda:candidateUsers="admin">
+    <bpmn:userTask id="Task_RealizarAjustes" name="Realizar Ajustes" camunda:formKey="embedded:/forms/forms/v1/realizar_ajustes.html" camunda:assignee="admin">
       <bpmn:incoming>SequenceFlow_NecessitaAjustes</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_EnviarParaReanalise</bpmn:outgoing>
     </bpmn:userTask>
