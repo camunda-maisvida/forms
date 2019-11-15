@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0lsqnh2" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
+  <bpmn:collaboration id="Collaboration_SolicitacaoDeFerias">
+    <bpmn:participant id="Participant_SolicitacaoFerais" name="Solicitação de Férias" processRef="Process_SolicitacaoFerais" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_SolicitacaoFerais" name="Solicitação de Férias" isExecutable="true" camunda:versionTag="0.0.1">
+    <bpmn:laneSet id="LaneSet_0exrqx5">
+      <bpmn:lane id="Lane_Solicitante" name="Solicitante">
+        <bpmn:flowNodeRef>StartEvent_RegistrarSolicitacao</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_RealizarAjustes</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_FinalizadoComAprovacao</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ServiceTask_1byw80u</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>TaskMail_NotificarAprovacao</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ServiceTask_0o0uhra</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Chefe" name="Chefe">
+        <bpmn:flowNodeRef>ExclusiveGateway_SolicitacaoAnalisada</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_VerificarDiasDisponiveis</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_AnalisarSolicitacao</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_FinalizadoComRejeicao</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>TaskMail_NotificarRejeicao</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ServiceTask_005ywkd</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartEvent_RegistrarSolicitacao" name="Registrar Solicitação" camunda:formKey="embedded:/forms/forms/v1/registrar_solicitacao.html">
+      <bpmn:outgoing>SequenceFlow_IrParaVerificacaoDeDias</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_SolicitacaoAnalisada">
+      <bpmn:incoming>SequenceFlow_Analisado</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_NecessitaAjustes</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_Aprovado</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_Rejeitado</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_VerificarDiasDisponiveis" name="Verificar dias disponíveis" camunda:type="external" camunda:topic="verifica-dias-disponiveis-topic" camunda:taskPriority="0">
+      <bpmn:incoming>SequenceFlow_1kgx4ua</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_IrParaAnalise</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Task_AnalisarSolicitacao" name="Analisar Solicitação" camunda:formKey="embedded:/forms/forms/v1/analisar_solicitacao.html" camunda:candidateUsers="admin">
+      <bpmn:incoming>SequenceFlow_IrParaAnalise</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_EnviarParaReanalise</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_Analisado</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Task_RealizarAjustes" name="Realizar Ajustes" camunda:formKey="embedded:/forms/forms/v1/realizar_ajustes.html" camunda:candidateUsers="admin">
+      <bpmn:incoming>SequenceFlow_NecessitaAjustes</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_EnviarParaReanalise</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_IrParaVerificacaoDeDias" sourceRef="StartEvent_RegistrarSolicitacao" targetRef="ServiceTask_1byw80u" />
+    <bpmn:sequenceFlow id="SequenceFlow_IrParaAnalise" sourceRef="Task_VerificarDiasDisponiveis" targetRef="Task_AnalisarSolicitacao" />
+    <bpmn:sequenceFlow id="SequenceFlow_Analisado" sourceRef="Task_AnalisarSolicitacao" targetRef="ExclusiveGateway_SolicitacaoAnalisada" />
+    <bpmn:sequenceFlow id="SequenceFlow_NecessitaAjustes" name="Necessita Ajustes" sourceRef="ExclusiveGateway_SolicitacaoAnalisada" targetRef="Task_RealizarAjustes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${analise == 'NECESSITA_AJUSTES'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_EnviarParaReanalise" name="Enviar para Re-Análise" sourceRef="Task_RealizarAjustes" targetRef="Task_AnalisarSolicitacao" />
+    <bpmn:sequenceFlow id="SequenceFlow_Aprovado" name="Aprovado" sourceRef="ExclusiveGateway_SolicitacaoAnalisada" targetRef="TaskMail_NotificarAprovacao">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${analise == 'APROVADO'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_Rejeitado" name="Rejeitado" sourceRef="ExclusiveGateway_SolicitacaoAnalisada" targetRef="TaskMail_NotificarRejeicao">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${analise == 'REJEITADO'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_Rejeicao" sourceRef="TaskMail_NotificarRejeicao" targetRef="ServiceTask_005ywkd" />
+    <bpmn:sequenceFlow id="SequenceFlow_1r469jk" sourceRef="TaskMail_NotificarAprovacao" targetRef="ServiceTask_0o0uhra" />
+    <bpmn:endEvent id="EndEvent_FinalizadoComAprovacao" name="Finalizado com Aprovação">
+      <bpmn:incoming>SequenceFlow_162izzf</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="EndEvent_FinalizadoComRejeicao" name="Finalizado com Rejeição">
+      <bpmn:incoming>SequenceFlow_0wnbfp1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="ServiceTask_1byw80u" name="Logger" camunda:asyncBefore="true">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">http://localhost:8882/process-instance/${execution.getProcessInstanceId()}</camunda:inputParameter>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_IrParaVerificacaoDeDias</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1kgx4ua</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1kgx4ua" sourceRef="ServiceTask_1byw80u" targetRef="Task_VerificarDiasDisponiveis" />
+    <bpmn:sequenceFlow id="SequenceFlow_162izzf" sourceRef="ServiceTask_0o0uhra" targetRef="EndEvent_FinalizadoComAprovacao" />
+    <bpmn:sequenceFlow id="SequenceFlow_0wnbfp1" sourceRef="ServiceTask_005ywkd" targetRef="EndEvent_FinalizadoComRejeicao" />
+    <bpmn:sendTask id="TaskMail_NotificarAprovacao" name="Notificar Aprovação">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">http://localhost:8881/email/solicitacao-ferias/enviar</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{
+    "from": "smtp.maisvida@gmail.com",
+    "subject": "[SOLICITAÇÃO DE FÉRIAS] Aprovada",
+    "to": [
+        "rodolfo.maisvida@gmail.com",
+        "wagner.maisvida@gmail.com"
+    ],
+    "variables": {
+        "paramMessage": "Sua solicitação de férias foi APROVADA !!!! Pode preparar as malas.",
+        "paramNomeSolicitante": "${nomeSolicitante}",                
+        "paramDataSolicitacao": "${dataSolicitacao}",
+        "paramDataSaida": "${dataSaida}",
+        "paramDataRetorno": "${dataRetorno}",
+        "paramQtdDias": "${qtdDias}",
+        "paramQtdDiasDisponiveis": "${qtdDiasDisponiveis}",
+        "paramAnalise": "${analise}",
+        "paramMotivo": "${motivo}"
+    }
+}</camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_Aprovado</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1r469jk</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:serviceTask id="ServiceTask_0o0uhra" name="Logger" camunda:asyncBefore="true">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">http://localhost:8882/process-instance/${execution.getProcessInstanceId()}</camunda:inputParameter>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1r469jk</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_162izzf</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sendTask id="TaskMail_NotificarRejeicao" name="Notificar Rejeição">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">http://localhost:8881/email/solicitacao-ferias/enviar</camunda:inputParameter>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{
+    "from": "smtp.maisvida@gmail.com",
+    "subject": "[SOLICITAÇÃO DE FÉRIAS] Rejeição",
+   "to": [
+        "rodolfo.maisvida@gmail.com",
+        "wagner.maisvida@gmail.com"
+    ],
+    "variables": {
+        "paramMessage": "Sua solicitação de férias foi REJEITADA.",
+        "paramNomeSolicitante": "${nomeSolicitante}",                
+        "paramDataSolicitacao": "${dataSolicitacao}",
+        "paramDataSaida": "${dataSaida}",
+        "paramDataRetorno": "${dataRetorno}",
+        "paramQtdDias": "${qtdDias}",
+        "paramQtdDiasDisponiveis": "${qtdDiasDisponiveis}",
+        "paramAnalise": "${analise}",
+        "paramMotivo": "${motivo}"
+    }
+}</camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_Rejeitado</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_Rejeicao</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:serviceTask id="ServiceTask_005ywkd" name="Logger" camunda:asyncBefore="true">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">http://localhost:8882/process-instance/${execution.getProcessInstanceId()}</camunda:inputParameter>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_Rejeicao</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0wnbfp1</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_SolicitacaoDeFerias">
+      <bpmndi:BPMNShape id="Participant_1tdidqm_di" bpmnElement="Participant_SolicitacaoFerais" isHorizontal="true">
+        <dc:Bounds x="155" y="80" width="1195" height="570" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_084ehss_di" bpmnElement="StartEvent_RegistrarSolicitacao" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="277" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="268" y="205" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0gljarb_di" bpmnElement="SequenceFlow_IrParaVerificacaoDeDias">
+        <di:waypoint x="313" y="180" />
+        <di:waypoint x="430" y="180" />
+        <di:waypoint x="430" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Lane_0a4rngn_di" bpmnElement="Lane_Solicitante" isHorizontal="true">
+        <dc:Bounds x="185" y="80" width="1165" height="260" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0rlbi0w_di" bpmnElement="Lane_Chefe" isHorizontal="true">
+        <dc:Bounds x="185" y="340" width="1165" height="310" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ke3hv8_di" bpmnElement="SequenceFlow_IrParaAnalise">
+        <di:waypoint x="480" y="470" />
+        <di:waypoint x="550" y="470" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1r2ylwc_di" bpmnElement="ExclusiveGateway_SolicitacaoAnalisada" isMarkerVisible="true">
+        <dc:Bounds x="725" y="445" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_131m7dw_di" bpmnElement="SequenceFlow_Analisado">
+        <di:waypoint x="650" y="470" />
+        <di:waypoint x="725" y="470" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_04pbigx_di" bpmnElement="SequenceFlow_NecessitaAjustes" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="750" y="445" />
+        <di:waypoint x="750" y="220" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="756" y="323" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0wpm864_di" bpmnElement="SequenceFlow_EnviarParaReanalise" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="700" y="180" />
+        <di:waypoint x="600" y="180" />
+        <di:waypoint x="600" y="430" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="613" y="156" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_121klmc_di" bpmnElement="Task_VerificarDiasDisponiveis">
+        <dc:Bounds x="380" y="430" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0vu10va_di" bpmnElement="Task_AnalisarSolicitacao">
+        <dc:Bounds x="550" y="430" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0zwqcrv_di" bpmnElement="Task_RealizarAjustes">
+        <dc:Bounds x="700" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_149m0dy_di" bpmnElement="SequenceFlow_Aprovado" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="775" y="470" />
+        <di:waypoint x="970" y="470" />
+        <di:waypoint x="970" y="280" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="857" y="453" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1dww7ih_di" bpmnElement="EndEvent_FinalizadoComAprovacao" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="1282" y="222" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1263" y="265" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1navi0s_di" bpmnElement="SequenceFlow_Rejeitado" bioc:stroke="#000" bioc:fill="#fff">
+        <di:waypoint x="750" y="495" />
+        <di:waypoint x="750" y="570" />
+        <di:waypoint x="920" y="570" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="796" y="553" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_02qxpvv_di" bpmnElement="EndEvent_FinalizadoComRejeicao" bioc:stroke="#000" bioc:fill="#fff">
+        <dc:Bounds x="1282" y="552" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1264" y="595" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1wxpjgj_di" bpmnElement="SequenceFlow_Rejeicao">
+        <di:waypoint x="1020" y="570" />
+        <di:waypoint x="1100" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SendTask_1srntci_di" bpmnElement="TaskMail_NotificarRejeicao">
+        <dc:Bounds x="920" y="530" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SendTask_1bpgeks_di" bpmnElement="TaskMail_NotificarAprovacao">
+        <dc:Bounds x="920" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1r469jk_di" bpmnElement="SequenceFlow_1r469jk">
+        <di:waypoint x="1020" y="240" />
+        <di:waypoint x="1100" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1byw80u_di" bpmnElement="ServiceTask_1byw80u">
+        <dc:Bounds x="380" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1kgx4ua_di" bpmnElement="SequenceFlow_1kgx4ua">
+        <di:waypoint x="430" y="320" />
+        <di:waypoint x="430" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0o0uhra_di" bpmnElement="ServiceTask_0o0uhra">
+        <dc:Bounds x="1100" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_162izzf_di" bpmnElement="SequenceFlow_162izzf">
+        <di:waypoint x="1200" y="240" />
+        <di:waypoint x="1282" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_005ywkd_di" bpmnElement="ServiceTask_005ywkd">
+        <dc:Bounds x="1100" y="530" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0wnbfp1_di" bpmnElement="SequenceFlow_0wnbfp1">
+        <di:waypoint x="1200" y="570" />
+        <di:waypoint x="1282" y="570" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

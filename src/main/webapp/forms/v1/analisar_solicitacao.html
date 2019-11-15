@@ -5,12 +5,11 @@
 	var variableManager = camForm.variableManager;
 
 	camForm.on('form-loaded', function() {
-		$scope.qtdDiasDisponivel = 10;
-		variableManager.variable( 'qtdDiasDisponivel' ).value =  10;
+		variableManager.fetchVariable('motivo');
 	});
 
 	camForm.on('variables-fetched', function() {
-		if (variableManager.variable( 'qtdDias' ).value > variableManager.variable( 'qtdDiasDisponivel' ).value) {
+		if (variableManager.variable( 'qtdDias' ).value > variableManager.variable( 'qtdDiasDisponiveis' ).value) {
 			 
 			variableManager.variable( 'analise' ).value = 'NECESSITA_AJUSTES';
 			$('#analise').prop('disabled', 'disabled');
@@ -25,7 +24,7 @@
   	});
 
 	camForm.on( 'submit', function() {
-
+		variableManager.variable( 'motivo' ).value = $scope.motivo;
   	});
 
 </script>
@@ -93,10 +92,10 @@
 	</div>
 	<hr>
 	<div class="form-group">
-		<label for="qtdDiasDisponivel-field">Qtd dias disponiveis:</label>
+		<label for="qtdDiasDisponiveis-field">Qtd dias disponiveis:</label>
 		<input type="number" 
 				readonly
-				cam-variable-name="qtdDiasDisponivel"
+				cam-variable-name="qtdDiasDisponiveis"
 				cam-variable-type="Integer"
 				class="form-control"/>
 	</div>
