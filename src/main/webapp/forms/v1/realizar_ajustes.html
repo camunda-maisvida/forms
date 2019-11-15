@@ -2,27 +2,17 @@
 <form role="form">
 
 <script cam-script type="text/form-script">
-
-	
     inject(['$rootScope', function($rootScope) {
 		$scope.nomeSolicitante = $rootScope.authentication.name;
 		$scope.dataSolicitacao = new Date().toLocaleDateString();
-		$scope.dataSaidaOpened = false;
-		$scope.dataRetornoOpened = false;
     }]);
 
-	$scope.calcularQtdDias = function(campo) {
+	$scope.calcularQtdDias = function() {
 		if (!$scope.dataSaida || !$scope.dataRetorno) {
 			$scope.qtdDias = null;
 			return;
 		}
-		if ($scope.dataRetorno <= $scope.dataSaida) {	
-			alert('A data de saida deve ser maior que a data de retorno.');
-			if (campo == 'dataRetorno') {
-				$scope.dataRetorno = null;
-			} else if (campo == 'dataSaida') {
-				$scope.dataSaida = null;
-			}
+		if ($scope.dataRetorno < $scope.dataSaida) {
 			$scope.qtdDias = null;
 			return;
 		}
@@ -49,15 +39,6 @@
     	camForm.variableManager.variableValue('nomeSolicitante', $scope.nomeSolicitante);
 		camForm.variableManager.variableValue('dataSolicitacao', $scope.dataSolicitacao);
 	});
-
-	camForm.on( 'submit', function(evt) {
-
-    	if ($scope.dataRetorno <= $scope.dataSaida) {
-			alert('A data de saida deve ser maior que a data de retorno.');
-			evt.submitPrevented = true;
-		}
-
-	});
 </script>
 
 	<div class="form-group">
@@ -79,7 +60,7 @@
 		<label for="dataSaida-field">Data de saida:</label>
 		<div>
 			<input type="text"
-					ng-change="calcularQtdDias('dataSaida');"
+					ng-change="calcularQtdDias();"
 					cam-variable-name="dataSaida" 
 					cam-variable-type="Date"
 					uib-datepicker-popup="yyyy-MM-dd'T'HH:mm:ss"
@@ -98,7 +79,7 @@
 		<label for="dataRetorno-field">Data de retorno:</label>
 		<div>
 			<input type="text"
-					ng-change="calcularQtdDias('dataRetorno');"
+					ng-change="calcularQtdDias();"
 					cam-variable-name="dataRetorno" 
 					cam-variable-type="Date"
 					uib-datepicker-popup="yyyy-MM-dd'T'HH:mm:ss"
@@ -119,6 +100,23 @@
 				readonly
 				cam-variable-name="qtdDias" 
 				cam-variable-type="Integer" 
+				class="form-control"/>
+	</div>
+	<hr>
+	<div class="form-group">
+		<label for="qtdDiasDisponivel-field">Qtd dias disponiveis:</label>
+		<input type="number" 
+				readonly
+				cam-variable-name="qtdDiasDisponivel"
+				cam-variable-type="Integer"
+				class="form-control"/>
+	</div>
+	<div class="form-group">
+		<label for="motivo-field">Motivo:</label>
+		<input type="text" 
+				readonly
+				cam-variable-name="motivo"
+				cam-variable-type="String"
 				class="form-control"/>
 	</div>
 	
