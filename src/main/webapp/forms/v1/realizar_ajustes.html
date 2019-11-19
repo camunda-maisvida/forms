@@ -41,83 +41,92 @@
 	});
 </script>
 
-	<div class="form-group">
-		<label for="nomeSolicitante-field">Nome do solicitante:</label>
-		<input readonly
-				cam-variable-name="nomeSolicitante" 
-				cam-variable-type="String" 
-				class="form-control"/>
-	</div>
-	<div class="form-group">
-		<label for="dataSolicitacao-field">Data da solicitação:</label>
-		<input readonly
-				cam-variable-name="dataSolicitacao" 
-				cam-variable-type="String" 
-				class="form-control"/>
-	</div>	
-	<hr>
-	<div class="form-group">
-		<label for="dataSaida-field">Data de saida:</label>
-		<div>
-			<input type="text"
-					ng-change="calcularQtdDias();"
-					cam-variable-name="dataSaida" 
-					cam-variable-type="Date"
-					uib-datepicker-popup="yyyy-MM-dd'T'HH:mm:ss"
-	       			is-open="dataSaidaOpened"
+	<div class="row">
+		<div class="form-group col-xs-6">
+			<label for="nomeSolicitante-field">Nome do solicitante:</label>
+			<input readonly
+					cam-variable-name="nomeSolicitante" 
+					cam-variable-type="String" 
 					class="form-control"/>
-			<span class="input-group-btn">
-			    <button type="button"
-			            class="btn btn-default"
-			            ng-click="openDataSaida($event)">
-			      <i class="glyphicon glyphicon-calendar"></i>
-			    </button>
-	  		</span>
-  		</div>
-	</div>
-	<div class="form-group">
-		<label for="dataRetorno-field">Data de retorno:</label>
-		<div>
-			<input type="text"
-					ng-change="calcularQtdDias();"
-					cam-variable-name="dataRetorno" 
-					cam-variable-type="Date"
-					uib-datepicker-popup="yyyy-MM-dd'T'HH:mm:ss"
-	       			is-open="dataRetornoOpened"
+		</div>
+		<div class="form-group col-xs-6">
+			<label for="dataSolicitacao-field">Data da solicitação:</label>
+			<input readonly
+					cam-variable-name="dataSolicitacao" 
+					cam-variable-type="String" 
 					class="form-control"/>
-			<span class="input-group-btn">
-			    <button type="button"
-			            class="btn btn-default"
-			            ng-click="openDataRetorno($event)">
-			      <i class="glyphicon glyphicon-calendar"></i>
-			    </button>
-	  		</span>
-  		</div>
+		</div>	
 	</div>
-	<div class="form-group">
-		<label for="qtdDias-field">Quantidade de dias:</label>
-		<input type="number"
-				readonly
-				cam-variable-name="qtdDias" 
-				cam-variable-type="Integer" 
-				class="form-control"/>
+	
+	<div class="row">
+		<div class="form-group col-xs-6">
+			<label for="dataSaida-field">Data de saida:</label>
+			<div>
+				<input type="text"
+						ng-change="calcularQtdDias();"
+						cam-variable-name="dataSaida" 
+						cam-variable-type="Date"
+						uib-datepicker-popup="yyyy-MM-dd'T'HH:mm:ss"
+		       			is-open="dataSaidaOpened"
+						class="form-control"/>
+				<span class="input-group-btn">
+				    <button type="button"
+				            class="btn btn-default"
+				            ng-click="openDataSaida($event)">
+				      <i class="glyphicon glyphicon-calendar"></i>
+				    </button>
+		  		</span>
+	  		</div>
+		</div>
+		<div class="form-group col-xs-6">
+			<label for="dataRetorno-field">Data de retorno:</label>
+			<div>
+				<input type="text"
+						ng-change="calcularQtdDias();"
+						cam-variable-name="dataRetorno" 
+						cam-variable-type="Date"
+						uib-datepicker-popup="yyyy-MM-dd'T'HH:mm:ss"
+		       			is-open="dataRetornoOpened"
+						class="form-control"/>
+				<span class="input-group-btn">
+				    <button type="button"
+				            class="btn btn-default"
+				            ng-click="openDataRetorno($event)">
+				      <i class="glyphicon glyphicon-calendar"></i>
+				    </button>
+		  		</span>
+	  		</div>
+		</div>
 	</div>
-	<hr>
-	<div class="form-group">
-		<label for="qtdDiasDisponiveis-field">Qtd dias disponiveis:</label>
-		<input type="number" 
-				readonly
-				cam-variable-name="qtdDiasDisponiveis"
-				cam-variable-type="Integer"
-				class="form-control"/>
+	
+	<div class="row">
+		<div class="form-group col-xs-6">
+			<label for="qtdDias-field">Quantidade de dias:</label>
+			<input type="number"
+					readonly
+					cam-variable-name="qtdDias" 
+					cam-variable-type="Integer" 
+					class="form-control"/>
+		</div>
+		<div class="form-group col-xs-6">
+			<label for="qtdDiasDisponiveis-field">Qtd dias disponiveis:</label>
+			<input type="number" 
+					readonly
+					cam-variable-name="qtdDiasDisponiveis"
+					cam-variable-type="Integer"
+					class="form-control"/>
+		</div>
 	</div>
-	<div class="form-group">
-		<label for="motivo-field">Motivo:</label>
-		<input type="text" 
-				readonly
-				cam-variable-name="motivo"
-				cam-variable-type="String"
-				class="form-control"/>
+	
+	<div class="row">
+		<div class="form-group col-xs-12">
+			<label for="motivo-field">Motivo:</label>
+			<input type="text" 
+					readonly
+					cam-variable-name="motivo"
+					cam-variable-type="String"
+					class="form-control"/>
+		</div>
 	</div>
 	
 </form>
