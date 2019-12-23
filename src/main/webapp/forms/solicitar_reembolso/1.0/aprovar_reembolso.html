@@ -1,0 +1,88 @@
+
+<form role="form">
+	<div class="row">
+		<div class="form-group col-xs-6">
+			<label for="nomeSolicitante-field">Nome do solicitante:</label>
+			<input readonly
+					cam-variable-name="nomeSolicitante" 
+					cam-variable-type="String" 
+					class="form-control"/>
+		</div>
+		<div class="form-group col-xs-6">
+			<label for="dataSolicitacao-field">Data da solicitação:</label>
+			<input readonly
+					cam-variable-name="dataSolicitacao" 
+					cam-variable-type="String" 
+					class="form-control"/>
+		</div>	
+	</div>
+	
+	<div class="row">
+		<div class="form-group col-xs-6">
+			<label for="despesa-field">Despesa:</label>
+			<input readonly
+					cam-variable-name="despesa" 
+					cam-variable-type="String" 
+					class="form-control"/>
+		</div>
+		<div class="form-group col-xs-6">
+			<label for="valor-field">Valor:</label>
+			<input readonly
+					cam-variable-name="valor" 
+					cam-variable-type="Double" 
+					class="form-control"/>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="form-group col-xs-4">
+			<label for="banco-field">Banco:</label>
+			<input readonly
+					cam-variable-name="banco" 
+					cam-variable-type="String" 
+					class="form-control"/>
+		</div>
+		<div class="form-group col-xs-4">
+			<label for="agencia-field">Agência:</label>
+			<input readonly
+					cam-variable-name="agencia" 
+					cam-variable-type="String" 
+					maxlength="4"
+					class="form-control"/>
+		</div>
+		<div class="form-group col-xs-4">
+			<label for="conta-field">Conta:</label>
+			<input readonly
+					cam-variable-name="conta" 
+					cam-variable-type="String"
+					maxlength="8" 
+					class="form-control"/>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="form-group col-xs-12">
+			<label for="observacao-field">Observação:</label>
+			<textarea readonly
+					cam-variable-name="observacao" 
+					cam-variable-type="String" 
+					class="form-control"/>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="form-group col-xs-12">
+			<label for="analise-field">Aprovar:</label>
+			<select id="analise-field"
+					name="analise"
+					ng-model="analise"
+					cam-variable-name="analise"
+					cam-variable-type="String"
+					class="form-control">
+				<option value="APROVADO">APROVADO</option>
+				<option value="REJEITADO">REJEITADO</option>
+			</select>
+		</div>
+	</div>
+
+</form>

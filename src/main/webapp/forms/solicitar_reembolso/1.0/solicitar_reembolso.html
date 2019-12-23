@@ -1,0 +1,73 @@
+
+<form role="form">
+
+<script cam-script type="text/form-script">
+	
+    inject(['$rootScope', function($rootScope) {
+		$scope.nomeSolicitante = $rootScope.authentication.name;
+		$scope.dataSolicitacao = new Date().toLocaleDateString();
+    }]);
+
+	camForm.on('form-loaded', function() {
+    	camForm.variableManager.variableValue('nomeSolicitante', $scope.nomeSolicitante);
+		camForm.variableManager.variableValue('dataSolicitacao', $scope.dataSolicitacao);
+	});
+
+
+</script>
+
+	<div class="row">
+		<div class="form-group col-xs-6">
+			<label for="nomeSolicitante-field">Nome do solicitante:</label>
+			<input readonly
+					cam-variable-name="nomeSolicitante" 
+					cam-variable-type="String" 
+					class="form-control"/>
+		</div>
+		<div class="form-group col-xs-6">
+			<label for="dataSolicitacao-field">Data da solicitação:</label>
+			<input readonly
+					cam-variable-name="dataSolicitacao" 
+					cam-variable-type="String" 
+					class="form-control"/>
+		</div>	
+	</div>
+	
+	<div class="row">
+		<div class="form-group col-xs-6">
+			<label for="despesa-field">Despesa:</label>
+			<input cam-variable-name="despesa" 
+					cam-variable-type="String" 
+					class="form-control"/>
+		</div>
+		<div class="form-group col-xs-6">
+			<label for="valor-field">Valor:</label>
+			<input cam-variable-name="valor" 
+					cam-variable-type="Double" 
+					class="form-control"/>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="form-group col-xs-4">
+			<label for="banco-field">Banco:</label>
+			<input cam-variable-name="banco" 
+					cam-variable-type="String" 
+					class="form-control"/>
+		</div>
+		<div class="form-group col-xs-4">
+			<label for="agencia-field">Agência:</label>
+			<input cam-variable-name="agencia" 
+					cam-variable-type="String" 
+					maxlength="4"
+					class="form-control"/>
+		</div>
+		<div class="form-group col-xs-4">
+			<label for="conta-field">Conta:</label>
+			<input cam-variable-name="conta" 
+					cam-variable-type="String"
+					maxlength="8" 
+					class="form-control"/>
+		</div>
+	</div>
+</form>
